@@ -1,0 +1,93 @@
+{
+ "experiment": "distilbert_sst2",
+ "created_utc": "2026-10-03T20:41:43Z",
+ "optimizer_sha16": "0b63021273376f1e",
+ "space_sha16": "07d3598d8c8b9eaa",
+ "staging": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25",
+ "files": {
+  "official_sgd.py": {
+   "sha256_16": "5e9948deedebd48c",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_sgd.py"
+  },
+  "official_adam.py": {
+   "sha256_16": "f8f8655c027d444c",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_adam.py"
+  },
+  "official_adamw.py": {
+   "sha256_16": "7aa650092d6ced76",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_adamw.py"
+  },
+  "official_rmsprop.py": {
+   "sha256_16": "7e53129fc25e47d4",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_rmsprop.py"
+  },
+  "official_nadam.py": {
+   "sha256_16": "5dd5da6deaeebd49",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_nadam.py"
+  },
+  "official_fields.py": {
+   "sha256_16": "07d3598d8c8b9eaa",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/official_fields.py"
+  },
+  "time_to_target.py": {
+   "sha256_16": "b1c1532cd58c35f6",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/time_to_target.py"
+  },
+  "guard_reproduce.py": {
+   "sha256_16": "86328bb2ccd9c96b",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/guard_reproduce.py"
+  },
+  "smoke_b25.py": {
+   "sha256_16": "876c94757074f01c",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/smoke_b25.py"
+  },
+  "smoke_compare.py": {
+   "sha256_16": "f38f0d7226be485c",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/smoke_compare.py"
+  },
+  "task_distilbert_sst2.py": {
+   "sha256_16": "a30a289a963d3af0",
+   "edited_vs_staging": true,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/task_distilbert_sst2.py"
+  },
+  "hpo_gp_bayesopt.py": {
+   "sha256_16": "8f2cf0bad4614133",
+   "edited_vs_staging": true,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/hpo_gp_bayesopt.py",
+   "post_generation_patch": "patch4"
+  },
+  "retrain_five_seeds.py": {
+   "sha256_16": "d7c063e866945236",
+   "edited_vs_staging": true,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/retrain_five_seeds.py"
+  },
+  "b25_builder.py": {
+   "sha256_16": "f2a8218aa0edf0be",
+   "edited_vs_staging": true,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/distilbert_sst2_b25/b25_builder.py"
+  },
+  "jumping_adam_simpson_b25.py": {
+   "sha256_16": "0b63021273376f1e",
+   "edited_vs_staging": false,
+   "source": "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/Gaps Fixing/b25_clean/jumping_adam_simpson_b25.py"
+  }
+ },
+ "patches": [
+  {
+   "name": "patch4",
+   "file": "hpo_gp_bayesopt.py",
+   "what": "default trial is re-queued if it was killed before completing; leftover RUNNING trials are failed first",
+   "utc": "2026-10-03T21:11:07Z"
+  }
+ ]
+}

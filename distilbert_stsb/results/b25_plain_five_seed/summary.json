@@ -1,0 +1,74 @@
+{
+  "optimizer": "b25_plain",
+  "seeds": [
+    42,
+    137,
+    256,
+    512,
+    1024
+  ],
+  "hparams": {
+    "lr": 2e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "weight_decay": 0.01
+  },
+  "source_trial": 0,
+  "gpu_name": "Tesla T4",
+  "budget": 1000,
+  "checkpoint_rule": "global_best",
+  "clip_rate": 1.0,
+  "n": 5,
+  "protocol_early_stop": false,
+  "experiment_name": "distilbert_stsb",
+  "val_loss": {
+    "mean": 0.5366435220718384,
+    "std": 0.009423850290209403
+  },
+  "val_acc": {
+    "mean": 0.8732095740183581,
+    "std": 0.002151300643053595
+  },
+  "compute_calls": {
+    "mean": 875.1,
+    "std": 199.67224393991265
+  },
+  "wall_s": {
+    "mean": 804.2965559496002,
+    "std": 185.90897988051668
+  },
+  "n_outer_steps": {
+    "mean": 980.0,
+    "std": 8.306623862918075
+  },
+  "train_loss": {
+    "mean": 0.07768115550279617,
+    "std": 0.042911812151713746
+  },
+  "train_acc": {
+    "mean": 0.05625,
+    "std": 0.040745015032516554
+  },
+  "test_loss": {
+    "mean": 0.6009200568821119,
+    "std": 0.018879595150835097
+  },
+  "test_acc": {
+    "mean": 0.8515162001357099,
+    "std": 0.0016476146494403508
+  },
+  "end_val_loss": {
+    "mean": 0.5420603231430053,
+    "std": 0.016512039026231898
+  },
+  "end_val_acc": {
+    "mean": 0.8730477270273237,
+    "std": 0.003172993359131842
+  },
+  "end_compute_calls": {
+    "mean": 999.48,
+    "std": 0.22803508501984954
+  }
+}

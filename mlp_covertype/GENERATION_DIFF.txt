@@ -1,0 +1,55 @@
+--- hpo_gp_bayesopt.py (staging)
++++ hpo_gp_bayesopt.py (new folder)
+@@ -9,3 +9,3 @@
+ 
+-Task module contract (default: task_distilbert_sst2)
++Task module contract (default: task_glue)
+ ----------------------------------------------------
+@@ -48,3 +48,3 @@
+ 
+-EXPERIMENT_NAME = "distilbert_sst2_b25"
++EXPERIMENT_NAME = "mlp_covertype"
+ N_TRIALS = 5
+@@ -54,3 +54,3 @@
+ PROTOCOL_EARLY_STOP = False
+-DEFAULT_TASK = "task_distilbert_sst2"
++DEFAULT_TASK = "task_glue"
+ CLI_OPTIMIZERS = ("sgd", "adam", "adamw", "rmsprop", "nadam")
+--- retrain_five_seeds.py (staging)
++++ retrain_five_seeds.py (new folder)
+@@ -262,2 +262,4 @@
+         json.dump(summary, f, indent=2)
++        f.flush()
++        os.fsync(f.fileno())
+     print(
+@@ -324,2 +326,4 @@
+             json.dump(row, f, indent=2)
++            f.flush()
++            os.fsync(f.fileno())
+         seed_rows.append(row)
+--- b25_builder.py (staging)
++++ b25_builder.py (new folder)
+@@ -5,3 +5,3 @@
+ 
+-_B25_DIR = "/content/drive/MyDrive/Optimiser Formula Creation - Working/experiments/Gaps Fixing/b25_clean"
++_B25_DIR = os.path.dirname(os.path.abspath(__file__))  # the verified optimizer file sits in this same folder
+ _B25_FILE = "jumping_adam_simpson_b25.py"
+@@ -27,3 +27,3 @@
+     plain=True: the jump mechanism only (momentum keep, no gate) with the SAME clip as AdamW."""
+-    from task_distilbert_sst2 import CLIP_NORM, DEFAULT_BUDGET
++    from task_glue import CLIP_NORM, DEFAULT_BUDGET
+ 
+--- smoke_b25.py (staging)
++++ smoke_b25.py (new folder)
+@@ -7,3 +7,3 @@
+ 
+-import task_distilbert_sst2 as task
++import task_glue as task
+ from b25_builder import build_b25
+--- smoke_compare.py (staging)
++++ smoke_compare.py (new folder)
+@@ -15,3 +15,3 @@
+ 
+-import task_distilbert_sst2 as task
++import task_glue as task
+ from b25_builder import build_b25

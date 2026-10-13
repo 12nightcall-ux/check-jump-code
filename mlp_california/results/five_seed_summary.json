@@ -1,0 +1,76 @@
+[
+  {
+    "optimizer": "nadam",
+    "seeds": [
+      42,
+      137,
+      256,
+      512,
+      1024
+    ],
+    "hparams": {
+      "lr": 0.002999999999999999,
+      "betas": [
+        0.9419568836720301,
+        0.9
+      ],
+      "weight_decay": 0.001
+    },
+    "source_trial": 3,
+    "gpu_name": "NVIDIA L4",
+    "budget": 1000,
+    "checkpoint_rule": "global_best",
+    "clip_rate": 0.2244,
+    "n": 5,
+    "protocol_early_stop": false,
+    "experiment_name": "mlp_california",
+    "val_loss": {
+      "mean": 0.21087813454388957,
+      "std": 0.0033932156991459033
+    },
+    "val_acc": {
+      "mean": 0.8902058235233692,
+      "std": 0.000968079277933712
+    },
+    "compute_calls": {
+      "mean": 960.0,
+      "std": 28.50438562747845
+    },
+    "wall_s": {
+      "mean": 9.3744249632,
+      "std": 0.2716179073577359
+    },
+    "n_outer_steps": {
+      "mean": 1000.0,
+      "std": 0.0
+    },
+    "train_loss": {
+      "mean": 0.2051559567451477,
+      "std": 0.04347056423551739
+    },
+    "train_acc": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "test_loss": {
+      "mean": 0.21711925927366707,
+      "std": 0.003025890213492121
+    },
+    "test_acc": {
+      "mean": 0.885189746229882,
+      "std": 0.0012509041254336094
+    },
+    "end_val_loss": {
+      "mean": 0.21422387728087353,
+      "std": 0.003779582324951296
+    },
+    "end_val_acc": {
+      "mean": 0.8893088495157945,
+      "std": 0.0017544037284681784
+    },
+    "end_compute_calls": {
+      "mean": 1000.0,
+      "std": 0.0
+    }
+  }
+]

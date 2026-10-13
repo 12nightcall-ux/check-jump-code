@@ -1,0 +1,76 @@
+[
+  {
+    "optimizer": "nadam",
+    "seeds": [
+      42,
+      137,
+      256,
+      512,
+      1024
+    ],
+    "hparams": {
+      "lr": 0.00015801635497952304,
+      "betas": [
+        0.804086480751851,
+        0.9116725595053139
+      ],
+      "weight_decay": 0.001
+    },
+    "source_trial": 2,
+    "gpu_name": "NVIDIA L4",
+    "budget": 1000,
+    "checkpoint_rule": "global_best",
+    "clip_rate": 1.0,
+    "n": 5,
+    "protocol_early_stop": false,
+    "experiment_name": "ftt_california",
+    "val_loss": {
+      "mean": 0.21074984252298834,
+      "std": 0.003626782778431846
+    },
+    "val_acc": {
+      "mean": 0.8912740856421766,
+      "std": 0.0025828464564905704
+    },
+    "compute_calls": {
+      "mean": 895.0,
+      "std": 81.77713616898063
+    },
+    "wall_s": {
+      "mean": 17.88819718519999,
+      "std": 1.742538184070331
+    },
+    "n_outer_steps": {
+      "mean": 1000.0,
+      "std": 0.0
+    },
+    "train_loss": {
+      "mean": 0.205197536945343,
+      "std": 0.05108295217731043
+    },
+    "train_acc": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "test_loss": {
+      "mean": 0.22833003597358092,
+      "std": 0.011989009238643251
+    },
+    "test_acc": {
+      "mean": 0.8839515923413583,
+      "std": 0.005123117409322108
+    },
+    "end_val_loss": {
+      "mean": 0.22667464898846254,
+      "std": 0.013287509535327955
+    },
+    "end_val_acc": {
+      "mean": 0.8872828873510108,
+      "std": 0.005631287555962867
+    },
+    "end_compute_calls": {
+      "mean": 1000.0,
+      "std": 0.0
+    }
+  }
+]

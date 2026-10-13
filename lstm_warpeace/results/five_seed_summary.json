@@ -1,0 +1,76 @@
+[
+  {
+    "optimizer": "nadam",
+    "seeds": [
+      42,
+      137,
+      256,
+      512,
+      1024
+    ],
+    "hparams": {
+      "lr": 0.002999999999999999,
+      "betas": [
+        0.9146299560359724,
+        0.9
+      ],
+      "weight_decay": 0.001
+    },
+    "source_trial": 3,
+    "gpu_name": "NVIDIA L4",
+    "budget": 1000,
+    "checkpoint_rule": "global_best",
+    "clip_rate": 0.0386,
+    "n": 5,
+    "protocol_early_stop": false,
+    "experiment_name": "lstm_warpeace",
+    "val_loss": {
+      "mean": 2.0145495963156073,
+      "std": 0.01558454286503195
+    },
+    "val_acc": {
+      "mean": 0.426,
+      "std": 0.004313970305748741
+    },
+    "compute_calls": {
+      "mean": 950.0,
+      "std": 39.528470752104745
+    },
+    "wall_s": {
+      "mean": 17.58344092059997,
+      "std": 0.8938548511850986
+    },
+    "n_outer_steps": {
+      "mean": 1000.0,
+      "std": 0.0
+    },
+    "train_loss": {
+      "mean": 2.026552128791809,
+      "std": 0.038609621575242996
+    },
+    "train_acc": {
+      "mean": 21.164,
+      "std": 0.6155322899734831
+    },
+    "test_loss": {
+      "mean": 2.023447683282029,
+      "std": 0.015614509901423506
+    },
+    "test_acc": {
+      "mean": 0.4171346633416459,
+      "std": 0.0064825451698219535
+    },
+    "end_val_loss": {
+      "mean": 2.0364499721764924,
+      "std": 0.014063768997220864
+    },
+    "end_val_acc": {
+      "mean": 0.41663279301745637,
+      "std": 0.006413526442355603
+    },
+    "end_compute_calls": {
+      "mean": 1000.0,
+      "std": 0.0
+    }
+  }
+]

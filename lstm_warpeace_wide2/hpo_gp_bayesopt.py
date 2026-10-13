@@ -1,0 +1,710 @@
+"""GP BayesOpt T=5 (3 start + 2 guided trials) for the B25 comparison (experiments/distilbert_sst2_b25).
+
+distilbert-base-uncased full fine-tune × GLUE SST-2. Equal 1000 Ng.
+GPSampler only (refuse TPESampler and BoTorchSampler).
+Does not read or write CIFAR or bert_mini folders.
+
+Gradient clip: CLIP_NORM (1.0) lives in the task module; this script never clips by itself.
+Logged clip_rate is the real share of clipped steps, reported by the task.
+
+Task module contract (default: task_glue)
+----------------------------------------------------
+  task.build_model(seed=seed)
+  task.train_one_trial(model, optimizer, *, smoke, seed, budget=DEFAULT_BUDGET)
+      Returns last-at-stop val_loss plus curve. HPO minimizes
+      global_best_checkpoint val_loss. Last-at-stop is last_val_loss.
+
+HPO never searches cosine hyperparameters. Jumping extra-HP jump_size is
+searched only for jumping_adam / jumping_sgd, inside the same T=50.
+min_jump_size locked 10. adaptive_tolerance locked False. loss_tolerance
+locked 1.05 (5%). Neither is a searched dimension.
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib
+import json
+import math
+import os
+import shutil
+import sqlite3
+import sys
+import tempfile
+import traceback
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _HERE)
+
+import optuna
+from optuna.trial import TrialState
+
+from official_adam import build_adam
+from official_adamw import build_adamw
+from official_fields import SEARCHED, SPACE
+from official_nadam import build_nadam
+from official_rmsprop import build_rmsprop
+from official_sgd import build_sgd
+
+EXPERIMENT_NAME = "lstm_warpeace_wide2"
+N_TRIALS = 5
+N_STARTUP_TRIALS = 3
+HPO_NONFINITE_PENALTY = 1e6
+DEFAULT_BUDGET = 1000
+PROTOCOL_EARLY_STOP = False
+DEFAULT_TASK = "task_glue"
+CLI_OPTIMIZERS = ("sgd", "adam", "adamw", "rmsprop", "nadam")
+CLI_JUMPING = ("b25",)
+CLI_ALL = CLI_OPTIMIZERS + CLI_JUMPING
+FRESH_ENV = "DISTILBERT_FRESH_PAPER_START"
+MIRROR_ENV = "DISTILBERT_RESULTS_MIRROR"
+
+_CANONICAL = {
+    "sgd": "SGD",
+    "adam": "Adam",
+    "adamw": "AdamW",
+    "rmsprop": "RMSprop",
+    "nadam": "NAdam",
+    "b25": "AdamW",
+    "jumping_sgd": "SGD",
+}
+
+
+# Trial 0 of every arm: a standard fine-tuning default restricted to that arm's own searched
+# fields. Every value must lie inside the shared search box (checked at import, below).
+DEFAULT_TRIAL0 = {
+    "sgd": {"lr": 1e-3, "momentum": 0.9, "weight_decay": 0.0},
+    "adam": {"lr": 2e-5, "beta1": 0.9, "beta2": 0.999, "weight_decay": 0.0},
+    "adamw": {"lr": 2e-5, "beta1": 0.9, "beta2": 0.999, "weight_decay": 0.01},
+    "rmsprop": {"lr": 2e-5, "weight_decay": 0.0},
+    "nadam": {"lr": 2e-5, "beta1": 0.9, "beta2": 0.999, "weight_decay": 0.0},
+    "b25": {"lr": 2e-5, "beta1": 0.9, "beta2": 0.999, "weight_decay": 0.01},
+}
+
+
+def _check_default_trial0_in_box():
+    for arm, d in DEFAULT_TRIAL0.items():
+        want = set()
+        for field in SEARCHED[_CANONICAL[arm]]:
+            want.update(("beta1", "beta2") if field == "betas" else (field,))
+        assert set(d) == want, (arm, sorted(d), sorted(want))
+        for k, v in d.items():
+            if k == "lr":
+                ok = SPACE["lr"][1] <= v <= SPACE["lr"][2]
+            elif k == "momentum":
+                ok = SPACE["momentum"][1] <= v <= SPACE["momentum"][2]
+            elif k == "beta1":
+                ok = SPACE["betas"][1][0] <= v <= SPACE["betas"][1][1]
+            elif k == "beta2":
+                ok = SPACE["betas"][2][0] <= v <= SPACE["betas"][2][1]
+            elif k == "weight_decay":
+                ok = v in SPACE["weight_decay"][1]
+            else:
+                ok = False
+            assert ok, "default trial value outside the search box: %s %s=%r" % (arm, k, v)
+
+
+_check_default_trial0_in_box()
+
+
+def make_sampler(seed: int):
+    """GPSampler only. Never TPESampler. Never BoTorchSampler."""
+    try:
+        sampler = optuna.samplers.GPSampler(
+            seed=seed, n_startup_trials=N_STARTUP_TRIALS
+        )
+    except (ImportError, ModuleNotFoundError, AttributeError, TypeError) as gp_err:
+        raise RuntimeError(
+            "GPSampler is required. Refusing TPESampler and BoTorchSampler. "
+            f"GPSampler error: {gp_err}"
+        ) from gp_err
+    name = type(sampler).__name__
+    if name != "GPSampler":
+        raise RuntimeError(
+            f"SAMPLER={name} is not GPSampler. Refusing TPESampler and BoTorchSampler."
+        )
+    print("SAMPLER=GPSampler")
+    return sampler
+
+
+def suggest_hparams(trial: optuna.Trial, opt_name: str) -> dict:
+    """Draw SEARCHED fields for opt_name using official_fields.SPACE."""
+    canonical = _CANONICAL[opt_name]
+    hps = {}
+    for field in SEARCHED[canonical]:
+        kind, *rest = SPACE[field]
+        if kind == "log_uniform":
+            lo, hi = rest
+            hps[field] = trial.suggest_float(field, lo, hi, log=True)
+        elif kind == "uniform":
+            lo, hi = rest
+            hps[field] = trial.suggest_float(field, lo, hi, log=False)
+        elif kind == "uniform_pair":
+            (lo1, hi1), (lo2, hi2) = rest
+            beta1 = trial.suggest_float("beta1", lo1, hi1, log=False)
+            beta2 = trial.suggest_float("beta2", lo2, hi2, log=False)
+            hps[field] = (beta1, beta2)
+        elif kind == "categorical":
+            (choices,) = rest
+            hps[field] = trial.suggest_categorical(field, list(choices))
+        elif kind == "categorical_pair":
+            c1, c2 = rest
+            beta1 = trial.suggest_categorical("beta1", list(c1))
+            beta2 = trial.suggest_categorical("beta2", list(c2))
+            hps[field] = (beta1, beta2)
+        else:
+            raise ValueError(f"unknown SPACE kind {kind!r} for {field}")
+    if opt_name == "jumping_adam":
+        from jumping_adam_builder import (
+            ADAPTIVE_TOLERANCE,
+            JUMPING_EXTRA_SPACE,
+            MIN_JUMP_SIZE,
+        )
+    elif opt_name == "jumping_sgd":
+        from jumping_sgd_builder import (
+            ADAPTIVE_TOLERANCE,
+            JUMPING_EXTRA_SPACE,
+            MIN_JUMP_SIZE,
+        )
+    else:
+        JUMPING_EXTRA_SPACE = None
+        MIN_JUMP_SIZE = None
+        ADAPTIVE_TOLERANCE = None
+    if JUMPING_EXTRA_SPACE is not None:
+        if "adaptive_tolerance" in JUMPING_EXTRA_SPACE:
+            raise ValueError(
+                "adaptive_tolerance must be locked, not in JUMPING_EXTRA_SPACE"
+            )
+        for field, spec in JUMPING_EXTRA_SPACE.items():
+            kind, choices = spec
+            if kind != "categorical":
+                raise ValueError(f"unknown JUMPING_EXTRA_SPACE kind {kind!r} for {field}")
+            hps[field] = trial.suggest_categorical(field, list(choices))
+        hps["min_jump_size"] = MIN_JUMP_SIZE  # locked; not suggest_*
+        hps["adaptive_tolerance"] = ADAPTIVE_TOLERANCE  # locked False; not suggest_*
+    return hps
+
+
+def build_optimizer(opt_name: str, params, hps: dict):
+    if opt_name == "sgd":
+        return build_sgd(params, hps["lr"], hps["momentum"], hps["weight_decay"])
+    if opt_name == "adam":
+        return build_adam(params, hps["lr"], hps["betas"], hps["weight_decay"])
+    if opt_name == "adamw":
+        return build_adamw(params, hps["lr"], hps["betas"], hps["weight_decay"])
+    if opt_name == "rmsprop":
+        return build_rmsprop(params, hps["lr"], hps["weight_decay"])
+    if opt_name == "nadam":
+        return build_nadam(params, hps["lr"], hps["betas"], hps["weight_decay"])
+    if opt_name == "jumping_adam":
+        from jumping_adam_builder import build_jumping_adam
+
+        return build_jumping_adam(
+            params,
+            hps["lr"],
+            hps["betas"],
+            hps["weight_decay"],
+            hps["jump_size"],
+            hps["min_jump_size"],
+            hps["adaptive_tolerance"],
+        )
+    if opt_name == "jumping_sgd":
+        from jumping_sgd_builder import build_jumping_sgd
+
+        return build_jumping_sgd(
+            params,
+            hps["lr"],
+            hps["momentum"],
+            hps["weight_decay"],
+            hps["jump_size"],
+            hps["min_jump_size"],
+            hps["adaptive_tolerance"],
+        )
+    if opt_name == "b25":
+        from b25_builder import build_b25
+
+        return build_b25(params, hps["lr"], hps["betas"], hps["weight_decay"])
+    if opt_name == "b25_plain":
+        from b25_builder import build_b25
+
+        return build_b25(params, hps["lr"], hps["betas"], hps["weight_decay"], plain=True)
+    raise ValueError(f"unknown optimizer {opt_name!r}")
+
+
+def load_task(module_name: str):
+    try:
+        return importlib.import_module(module_name)
+    except ImportError as exc:
+        raise SystemExit(f"task module {module_name!r} not found") from exc
+
+
+def _jsonable_hps(hps: dict) -> dict:
+    return {k: (list(v) if isinstance(v, tuple) else v) for k, v in hps.items()}
+
+
+def trial_json_path(opt_name: str, trial_number: int, smoke: bool) -> str:
+    results_dir = os.path.join(_HERE, "results")
+    suffix = "_smoke" if smoke else ""
+    trial_dir = os.path.join(results_dir, f"{opt_name}{suffix}_trials")
+    os.makedirs(trial_dir, exist_ok=True)
+    return os.path.join(trial_dir, f"trial_{trial_number}.json")
+
+
+def _atomic_write_json(path: str, payload: dict) -> None:
+    directory = os.path.dirname(path)
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".tmp_trial_", suffix=".json", dir=directory)
+    try:
+        with os.fdopen(fd, "w") as f:
+            json.dump(payload, f, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def write_trial_curve_json(
+    opt_name: str, trial: optuna.Trial, result: dict, hps: dict, smoke: bool, gb: dict
+) -> str:
+    path = trial_json_path(opt_name, trial.number, smoke)
+    hpo_val = float(gb["val_loss"])
+    if not math.isfinite(hpo_val):
+        hpo_val = float(HPO_NONFINITE_PENALTY)
+    if "experiment_name" not in result or "protocol_early_stop" not in result:
+        raise AssertionError(
+            "train_one_trial must set experiment_name and protocol_early_stop"
+        )
+    if result["experiment_name"] != EXPERIMENT_NAME:
+        raise AssertionError(
+            f"experiment_name={result['experiment_name']!r} != {EXPERIMENT_NAME!r}"
+        )
+    if bool(result["protocol_early_stop"]) != PROTOCOL_EARLY_STOP:
+        raise AssertionError(
+            f"protocol_early_stop={result['protocol_early_stop']!r} != "
+            f"{PROTOCOL_EARLY_STOP!r}"
+        )
+    billed = float(result["compute_calls"])
+    actual_budget = float(result["budget"])
+    if billed > actual_budget + 1e-9:
+        raise AssertionError(
+            f"trial JSON compute_calls={billed} > budget={actual_budget}"
+        )
+    payload = {
+        "trial_number": trial.number,
+        "optimizer": opt_name,
+        "smoke": smoke,
+        "budget": actual_budget,
+        "n_outer_steps": int(result["n_outer_steps"]),
+        "compute_calls": billed,
+        "clip_rate": float(result.get("clip_rate", 0.0)),
+        "val_loss": hpo_val,
+        "best_compute_calls": float(gb["compute_calls"]),
+        "best_wall_s": float(gb["wall_s"]),
+        "val_acc": float(gb["val_acc"]),
+        "hpo_objective_val_loss": hpo_val,
+        "last_val_loss": float(result["val_loss"]),
+        "last_val_acc": float(result["val_acc"]),
+        "train_loss": float(result["train_loss"]),
+        "train_acc": float(result["train_acc"]),
+        "wall_s": float(result["wall_s"]),
+        "gpu_name": result.get("gpu_name", "unknown"),
+        "hparams": _jsonable_hps(hps),
+        "curve": result["curve"],
+        "b25_stats": result.get("b25_stats"),
+        "dropout_mode": result.get("dropout_mode"),
+        "clip_norm": result.get("clip_norm"),
+        "protocol_early_stop": PROTOCOL_EARLY_STOP,
+        "experiment_name": EXPERIMENT_NAME,
+    }
+    _atomic_write_json(path, payload)
+    return path
+
+
+def make_objective(opt_name: str, task, smoke: bool, seed: int):
+    def objective(trial: optuna.Trial) -> float:
+        hps = suggest_hparams(trial, opt_name)
+        model = task.build_model(seed=seed)
+        optimizer = build_optimizer(opt_name, model.parameters(), hps)
+        result = task.train_one_trial(
+            model,
+            optimizer,
+            smoke=smoke,
+            seed=seed,
+            budget=DEFAULT_BUDGET,
+        )
+        gb = task.global_best_checkpoint(result["curve"])
+        hpo_val = float(gb["val_loss"])
+        if not math.isfinite(hpo_val):
+            hpo_val = float(HPO_NONFINITE_PENALTY)
+        hps_out = _jsonable_hps(hps)
+        trial.set_user_attr("compute_calls", result["compute_calls"])
+        trial.set_user_attr("n_outer_steps", int(result["n_outer_steps"]))
+        trial.set_user_attr("clip_rate", float(result.get("clip_rate", 0.0)))
+        trial.set_user_attr("val_acc", float(gb["val_acc"]))
+        trial.set_user_attr("hpo_objective_val_loss", hpo_val)
+        trial.set_user_attr("last_val_loss", float(result["val_loss"]))
+        trial.set_user_attr("last_val_acc", float(result["val_acc"]))
+        trial.set_user_attr("wall_s", float(result["wall_s"]))
+        trial.set_user_attr("gpu_name", result.get("gpu_name", "unknown"))
+        trial.set_user_attr("curve", result["curve"])
+        trial.set_user_attr("hparams", hps_out)
+        json_path = write_trial_curve_json(opt_name, trial, result, hps, smoke, gb)
+        trial.set_user_attr("curve_json", json_path)
+        return hpo_val
+
+    return objective
+
+
+def study_storage_path(opt_name: str, smoke: bool = False) -> str:
+    results_dir = os.path.join(_HERE, "results")
+    os.makedirs(results_dir, exist_ok=True)
+    suffix = "_smoke" if smoke else ""
+    db_path = os.path.abspath(os.path.join(results_dir, f"{opt_name}{suffix}.db"))
+    return f"sqlite:///{db_path}"
+
+
+def study_name_for(opt_name: str, smoke: bool = False) -> str:
+    smoke_tag = "_smoke" if smoke else ""
+    return f"{EXPERIMENT_NAME}_{opt_name}{smoke_tag}"
+
+
+def load_existing_study(opt_name: str, *, smoke: bool = False):
+    storage = study_storage_path(opt_name, smoke=smoke)
+    name = study_name_for(opt_name, smoke=smoke)
+    try:
+        return optuna.load_study(study_name=name, storage=storage)
+    except Exception as exc:
+        raise SystemExit(
+            f"{opt_name}: cannot load Optuna study {name!r} at {storage}: {exc}. "
+            "Run HPO first. Do not delete JSON."
+        ) from exc
+
+
+def complete_trial_numbers(study) -> set:
+    return {t.number for t in study.trials if t.state == TrialState.COMPLETE}
+
+
+def fail_or_running_trial_numbers(study) -> set:
+    return {
+        t.number
+        for t in study.trials
+        if t.state in (TrialState.FAIL, TrialState.RUNNING)
+    }
+
+
+def _fail_leftover_running(study) -> int:
+    n = 0
+    for t in list(study.trials):
+        if t.state != TrialState.RUNNING:
+            continue
+        study.tell(t.number, state=TrialState.FAIL)
+        n += 1
+        print(
+            f"failed leftover RUNNING trial={t.number} so it cannot occupy a number",
+            flush=True,
+        )
+    return n
+
+
+def json_trial_numbers(opt_name: str, smoke: bool) -> set:
+    suffix = "_smoke" if smoke else ""
+    folder = os.path.join(_HERE, "results", f"{opt_name}{suffix}_trials")
+    if not os.path.isdir(folder):
+        return set()
+    nums = set()
+    for name in os.listdir(folder):
+        if not name.startswith("trial_") or not name.endswith(".json"):
+            continue
+        try:
+            nums.add(int(name[len("trial_") : -len(".json")]))
+        except ValueError:
+            continue
+    return nums
+
+
+def assert_json_covers_complete(opt_name, smoke, study, n_trials) -> None:
+    complete = complete_trial_numbers(study)
+    json_nums = json_trial_numbers(opt_name, smoke)
+    missing = sorted(complete - json_nums)
+    if len(complete) != int(n_trials) or missing:
+        raise SystemExit(
+            f"{opt_name}: Optuna COMPLETE={len(complete)} numbers="
+            f"{sorted(complete)}; JSON missing COMPLETE {missing}. "
+            "Not skipping. Do not delete JSON. Finish HPO."
+        )
+
+
+def _env_flag_on(name: str) -> bool:
+    raw = os.environ.get(name)
+    if raw is None or str(raw).strip() == "":
+        return False
+    return str(raw).strip().lower() in ("1", "true", "yes", "on")
+
+
+def paper_db_path(opt_name: str) -> str:
+    """Paper SQLite only (never *_smoke.db)."""
+    return os.path.abspath(os.path.join(_HERE, "results", f"{opt_name}.db"))
+
+
+def n_complete_sqlite(db_path: str) -> tuple[int | None, str | None]:
+    if not os.path.isfile(db_path):
+        return 0, None
+    try:
+        with sqlite3.connect(db_path) as conn:
+            row = conn.execute(
+                "SELECT COUNT(*) FROM trials WHERE state = 'COMPLETE'"
+            ).fetchone()
+        return int(row[0]) if row else 0, None
+    except sqlite3.Error as exc:
+        return None, str(exc)
+
+
+def refuse_stale_paper_dbs(names: list[str]) -> None:
+    """Abort if any paper results/<opt>.db already has COMPLETE trials.
+
+    Opt-in via DISTILBERT_FRESH_PAPER_START=1 or --fresh. Smoke DBs are not
+    checked. Unset the env before resume of a NEW paper study or this
+    blocks the legitimate load_if_exists path.
+    """
+    blockers = []
+    checked = list(dict.fromkeys(list(names) + ["sgd"]))
+    for opt_name in checked:
+        path = paper_db_path(opt_name)
+        n, err = n_complete_sqlite(path)
+        if err:
+            blockers.append(f"{path} unreadable ({err})")
+            continue
+        if os.path.isfile(path) and n is not None and n > 0:
+            blockers.append(f"{path} n_complete={n}")
+    if not blockers:
+        print(
+            f"{FRESH_ENV}: no paper COMPLETE DBs; proceeding "
+            "(smoke DBs exempt)",
+            flush=True,
+        )
+        return
+    print(f"{FRESH_ENV}: refuse paper start", flush=True)
+    for b in blockers:
+        print(f"  {b}", flush=True)
+    print(
+        "Rename results/ to results_prefix_baseline/ first. "
+        "load_if_exists=True would resume leftover COMPLETE trials. "
+        f"Smoke DBs (*_smoke.db) are exempt. For disconnect resume of the "
+        f"NEW paper study, set {FRESH_ENV}=0 (do not pass --fresh).",
+        flush=True,
+    )
+    raise SystemExit(1)
+
+
+def _backup_sqlite_file(src: str, dest: str) -> None:
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    fd, tmp = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    try:
+        with sqlite3.connect(src) as src_conn, sqlite3.connect(tmp) as dst_conn:
+            src_conn.backup(dst_conn)
+        shutil.copy2(tmp, dest)
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+
+
+def _mirror_results_impl(reason: str = "") -> None:
+    """Copy local results/ to DISTILBERT_RESULTS_MIRROR (Drive). No-op if unset."""
+    dest = os.environ.get(MIRROR_ENV, "").strip()
+    if not dest:
+        return
+    src = os.path.join(_HERE, "results")
+    if not os.path.isdir(src):
+        return
+    os.makedirs(dest, exist_ok=True)
+    n_db = 0
+    n_json = 0
+    names = sorted(os.listdir(src))
+    for name in names:
+        s = os.path.join(src, name)
+        d = os.path.join(dest, name)
+        if os.path.isdir(s) and name.endswith("_trials"):
+            os.makedirs(d, exist_ok=True)
+            for fn in os.listdir(s):
+                if fn.endswith(".json"):
+                    shutil.copy2(os.path.join(s, fn), os.path.join(d, fn))
+                    n_json += 1
+    for name in names:
+        s = os.path.join(src, name)
+        d = os.path.join(dest, name)
+        if name.endswith(".db") and os.path.isfile(s):
+            _backup_sqlite_file(s, d)
+            n_db += 1
+    tag = f" reason={reason}" if reason else ""
+    print(
+        f"{MIRROR_ENV}{tag} dest={dest} n_db={n_db} n_json={n_json}",
+        flush=True,
+    )
+
+
+def mirror_results(reason: str = "") -> None:
+    """Mirror to Drive. A mirror problem (locked DB, Drive hiccup) must never stop training."""
+    try:
+        _mirror_results_impl(reason)
+    except Exception as exc:  # noqa: BLE001
+        print(f"WARNING mirror failed ({type(exc).__name__}: {exc}); training continues", flush=True)
+
+
+def _mirror_callback(study, trial) -> None:
+    if trial.state == TrialState.COMPLETE:
+        mirror_results(reason=f"{study.study_name}_trial_{trial.number}")
+
+
+def _default_trial_present(study, default: dict) -> bool:
+    """True if the default setting already has a COMPLETE trial or is still queued (WAITING).
+    A default trial that was killed while RUNNING is marked FAIL first, so it is NOT present
+    and gets queued again (otherwise an interrupted first trial would silently lose the default)."""
+    for t in study.trials:
+        if t.state == TrialState.COMPLETE:
+            try:
+                if all(abs(float(t.params[k]) - float(v)) <= 1e-12 * max(1.0, abs(float(v))) for k, v in default.items()):
+                    return True
+            except (KeyError, TypeError, ValueError):
+                pass
+        elif t.state == TrialState.WAITING and t.system_attrs.get("fixed_params") == default:
+            return True
+    return False
+
+
+def run_one_optimizer(opt_name: str, task, n_trials: int, seed: int, smoke: bool) -> None:
+    sampler = make_sampler(seed)
+    study = optuna.create_study(
+        study_name=study_name_for(opt_name, smoke=smoke),
+        storage=study_storage_path(opt_name, smoke=smoke),
+        direction="minimize",
+        sampler=sampler,
+        load_if_exists=True,
+    )
+    n_failed_running = _fail_leftover_running(study)
+    if not smoke and not _default_trial_present(study, DEFAULT_TRIAL0[opt_name]):
+        # trial 0 = the standard fine-tuning default; it lies inside the search box
+        study.enqueue_trial(dict(DEFAULT_TRIAL0[opt_name]))
+        print("enqueued default trial for %s: %s" % (opt_name, DEFAULT_TRIAL0[opt_name]), flush=True)
+    n_complete = sum(t.state == TrialState.COMPLETE for t in study.trials)
+    remaining = n_trials - n_complete
+    print(
+        f"optimizer={opt_name} n_complete={n_complete} "
+        f"n_trials={n_trials} remaining={remaining} "
+        f"failed_running={n_failed_running}"
+    )
+    try:
+        if remaining <= 0:
+            assert_json_covers_complete(opt_name, smoke, study, n_trials)
+            print(f"optimizer={opt_name} already has {n_complete} complete trials; skip")
+        else:
+            study.optimize(
+                make_objective(opt_name, task, smoke, seed),
+                n_trials=remaining,
+                callbacks=[_mirror_callback],
+            )
+        if study.best_trial is not None:
+            print(
+                f"best {opt_name}: val_loss={study.best_value} "
+                f"params={study.best_params}"
+            )
+    finally:
+        mirror_results(reason=f"{opt_name}_finally")
+
+
+def parse_args(argv=None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(
+        description=(
+            "DistilBERT SST-2 GP BayesOpt over official SGD/Adam/AdamW/"
+            "RMSprop/NAdam plus JumpingAdam and JumpingSGD."
+        )
+    )
+    p.add_argument(
+        "--optimizer",
+        choices=(*CLI_ALL, "all"),
+        required=True,
+        help=(
+            "Which optimizer to search. 'all' = five official plus "
+            "jumping_adam and jumping_sgd (same T=50, extra-HP inside T)."
+        ),
+    )
+    p.add_argument(
+        "--smoke",
+        action="store_true",
+        help=(
+            "2 trials; pass smoke=True to the task (SMOKE_BUDGET=20 Ng). "
+            "Uses results/<name>_smoke.db — never the paper study."
+        ),
+    )
+    p.add_argument("--n-trials", type=int, default=N_TRIALS)
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=11,
+        help="GPSampler seed and (same value every trial) model init + train shuffle.",
+    )
+    p.add_argument(
+        "--task",
+        default=DEFAULT_TASK,
+        help="Task module name (imported at runtime; not at --help).",
+    )
+    p.add_argument(
+        "--fresh",
+        action="store_true",
+        help=(
+            "Refuse to start a paper study if results/<opt>.db already has "
+            f"COMPLETE trials. Same as {FRESH_ENV}=1. Smoke DBs "
+            "are exempt. Omit for resume of a NEW paper study."
+        ),
+    )
+    return p.parse_args(argv)
+
+
+def main(argv=None) -> None:
+    args = parse_args(argv)
+    n_trials = 2 if args.smoke else args.n_trials
+    names = list(CLI_ALL) if args.optimizer == "all" else [args.optimizer]
+    fresh_on = bool(args.fresh) or _env_flag_on(FRESH_ENV)
+    print(
+        f"{FRESH_ENV}={'1' if fresh_on else '0'} "
+        f"smoke={bool(args.smoke)}",
+        flush=True,
+    )
+    if fresh_on and not args.smoke:
+        refuse_stale_paper_dbs(names)
+    elif fresh_on and args.smoke:
+        print(f"{FRESH_ENV}: skipped (smoke DBs exempt)", flush=True)
+    task = load_task(args.task)
+    isolate_arms = args.optimizer == "all"
+    failed = []
+    for name in names:
+        try:
+            run_one_optimizer(
+                name, task, n_trials=n_trials, seed=args.seed, smoke=args.smoke
+            )
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            if not isolate_arms:
+                raise
+            failed.append(name)
+            print(
+                f"optimizer={name} uncaught exception; continuing remaining arms",
+                file=sys.stderr,
+            )
+            traceback.print_exc()
+    if failed:
+        raise SystemExit(
+            f"--optimizer all: {len(failed)} arm(s) failed: {', '.join(failed)}"
+        )
+
+
+if __name__ == "__main__":
+    main()

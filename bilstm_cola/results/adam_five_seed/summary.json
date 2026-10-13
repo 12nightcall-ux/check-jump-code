@@ -1,0 +1,74 @@
+{
+  "optimizer": "adam",
+  "seeds": [
+    42,
+    137,
+    256,
+    512,
+    1024
+  ],
+  "hparams": {
+    "lr": 2e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "weight_decay": 0.0
+  },
+  "source_trial": 0,
+  "gpu_name": "Tesla T4",
+  "budget": 1000,
+  "checkpoint_rule": "global_best",
+  "clip_rate": 0.0132,
+  "n": 5,
+  "protocol_early_stop": false,
+  "experiment_name": "bilstm_cola",
+  "val_loss": {
+    "mean": 0.6119363369671976,
+    "std": 0.0005692109237005635
+  },
+  "val_acc": {
+    "mean": 0.6912751677852349,
+    "std": 0.0
+  },
+  "compute_calls": {
+    "mean": 915.0,
+    "std": 54.772255750516614
+  },
+  "wall_s": {
+    "mean": 260.27011416000005,
+    "std": 16.404108756651134
+  },
+  "n_outer_steps": {
+    "mean": 1000.0,
+    "std": 0.0
+  },
+  "train_loss": {
+    "mean": 0.5224676549434661,
+    "std": 0.04106248723718256
+  },
+  "train_acc": {
+    "mean": 0.78125,
+    "std": 0.038273277230987154
+  },
+  "test_loss": {
+    "mean": 0.6304191149884497,
+    "std": 0.014851437293026185
+  },
+  "test_acc": {
+    "mean": 0.6818713450292397,
+    "std": 0.0046783625730994274
+  },
+  "end_val_loss": {
+    "mean": 0.6212739375727975,
+    "std": 0.01191153931606676
+  },
+  "end_val_acc": {
+    "mean": 0.6895493767976989,
+    "std": 0.002908101800211521
+  },
+  "end_compute_calls": {
+    "mean": 1000.0,
+    "std": 0.0
+  }
+}

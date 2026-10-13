@@ -1,0 +1,74 @@
+{
+  "optimizer": "b25_plain",
+  "seeds": [
+    42,
+    137,
+    256,
+    512,
+    1024
+  ],
+  "hparams": {
+    "lr": 2e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "weight_decay": 0.01
+  },
+  "source_trial": 0,
+  "gpu_name": "NVIDIA A100-SXM4-40GB",
+  "budget": 1000,
+  "checkpoint_rule": "global_best",
+  "clip_rate": 0.9367195933480236,
+  "n": 5,
+  "protocol_early_stop": false,
+  "experiment_name": "distilbert_cola",
+  "val_loss": {
+    "mean": 0.45837087676943433,
+    "std": 0.006899006920233182
+  },
+  "val_acc": {
+    "mean": 0.7930968360498561,
+    "std": 0.01391707473377697
+  },
+  "compute_calls": {
+    "mean": 320.2800000000001,
+    "std": 90.70461399509959
+  },
+  "wall_s": {
+    "mean": 63.3703271559998,
+    "std": 18.550890269414875
+  },
+  "n_outer_steps": {
+    "mean": 938.4,
+    "std": 4.33589667773576
+  },
+  "train_loss": {
+    "mean": 0.324541899561882,
+    "std": 0.14597452614980572
+  },
+  "train_acc": {
+    "mean": 0.86875,
+    "std": 0.10689144610304419
+  },
+  "test_loss": {
+    "mean": 0.7384604891280682,
+    "std": 0.05087433116209471
+  },
+  "test_acc": {
+    "mean": 0.7941520467836257,
+    "std": 0.004604682967258393
+  },
+  "end_val_loss": {
+    "mean": 0.726756023589168,
+    "std": 0.06959157714524136
+  },
+  "end_val_acc": {
+    "mean": 0.8024928092042186,
+    "std": 0.005672176206231652
+  },
+  "end_compute_calls": {
+    "mean": 999.32,
+    "std": 0.1095445115009803
+  }
+}

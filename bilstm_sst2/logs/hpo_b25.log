@@ -1,0 +1,246 @@
+DISTILBERT_FRESH_PAPER_START=0 smoke=False
+SAMPLER=GPSampler
+[I 2026-10-06 04:17:59,629] A new study created in RDB with name: bilstm_sst2_b25
+enqueued default trial for b25: {'lr': 2e-05, 'beta1': 0.9, 'beta2': 0.999, 'weight_decay': 0.01}
+optimizer=b25 n_complete=0 n_trials=5 remaining=5 failed_running=0
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+glue/sst2 load failed (HfUriError: Invalid HF URI 'hf://datasets/glue@bcdcba79d07bc864c1c254ccfcedcce55bcc9a8c/.huggingface.yaml'. Repository id must be 'namespace/name', got 'glue'.); retry nyu-mll/glue
+GloVe coverage: 13467/13815 vocabulary words (97.5%), 99.7% of training tokens
+budget=1000.0 clip=1.0 dropout=eval_all gpu_name=Tesla T4 experiment=bilstm_sst2 model=bilstm-glove-840B-300d batch=32 max_len=128
+step=25 Ng=25.0 wall_s=8.478 train_loss=0.690528 train_acc=0.5000 val_loss=0.685250 val_acc=0.5690
+step=50 Ng=52.3 wall_s=18.827 train_loss=0.653025 train_acc=0.5938 val_loss=0.657285 val_acc=0.5800
+step=70 Ng=78.1 wall_s=28.429 train_loss=1.035453 train_acc=0.5938 val_loss=0.580433 val_acc=0.6795
+step=89 Ng=99.99999999999999 wall_s=36.724 train_loss=0.568793 train_acc=0.7188 val_loss=0.521772 val_acc=0.7760
+step=90 Ng=103.29999999999998 wall_s=41.477 train_loss=0.635200 train_acc=0.6875 val_loss=0.644391 val_acc=0.7655
+step=110 Ng=126.19999999999997 wall_s=50.196 train_loss=0.551114 train_acc=0.8125 val_loss=0.484018 val_acc=0.8040
+step=130 Ng=151.69999999999996 wall_s=60.081 train_loss=0.573925 train_acc=0.7500 val_loss=0.456089 val_acc=0.7990
+step=151 Ng=175.59999999999997 wall_s=69.665 train_loss=0.501070 train_acc=0.7188 val_loss=0.443921 val_acc=0.8150
+step=176 Ng=200.59999999999997 wall_s=77.796 train_loss=0.385461 train_acc=0.8125 val_loss=0.419030 val_acc=0.8315
+step=198 Ng=225.49999999999997 wall_s=87.499 train_loss=0.361436 train_acc=0.8125 val_loss=0.413546 val_acc=0.8235
+step=220 Ng=250.39999999999998 wall_s=97.221 train_loss=0.371508 train_acc=0.8125 val_loss=0.395736 val_acc=0.8315
+step=242 Ng=275.3 wall_s=107.038 train_loss=0.541533 train_acc=0.8125 val_loss=0.408325 val_acc=0.8160
+step=267 Ng=300.3 wall_s=115.310 train_loss=0.340179 train_acc=0.8438 val_loss=0.391893 val_acc=0.8320
+step=292 Ng=325.3 wall_s=123.616 train_loss=0.486045 train_acc=0.7812 val_loss=0.391829 val_acc=0.8330
+step=317 Ng=350.3 wall_s=131.978 train_loss=0.396848 train_acc=0.7812 val_loss=0.389506 val_acc=0.8305
+step=342 Ng=375.3 wall_s=140.171 train_loss=0.420181 train_acc=0.8438 val_loss=0.367539 val_acc=0.8405
+step=367 Ng=400.3 wall_s=148.442 train_loss=0.442304 train_acc=0.8750 val_loss=0.366968 val_acc=0.8440
+step=390 Ng=425.6 wall_s=158.262 train_loss=0.281081 train_acc=0.8750 val_loss=0.393304 val_acc=0.8250
+step=414 Ng=450.20000000000005 wall_s=166.537 train_loss=0.403181 train_acc=0.7812 val_loss=0.366332 val_acc=0.8400
+step=433 Ng=475.0000000000001 wall_s=177.873 train_loss=0.278067 train_acc=0.8750 val_loss=0.357069 val_acc=0.8480
+step=458 Ng=500.0000000000001 wall_s=186.357 train_loss=0.217696 train_acc=0.9062 val_loss=0.354292 val_acc=0.8490
+step=483 Ng=525.0000000000001 wall_s=194.686 train_loss=0.428945 train_acc=0.8125 val_loss=0.352748 val_acc=0.8450
+step=506 Ng=550.0000000000001 wall_s=203.015 train_loss=0.182955 train_acc=0.9688 val_loss=0.349265 val_acc=0.8465
+step=531 Ng=575.0000000000001 wall_s=211.370 train_loss=0.337899 train_acc=0.8438 val_loss=0.346612 val_acc=0.8490
+step=556 Ng=600.0000000000001 wall_s=219.535 train_loss=0.273546 train_acc=0.9062 val_loss=0.348928 val_acc=0.8480
+step=579 Ng=625.9000000000001 wall_s=228.278 train_loss=0.279152 train_acc=0.9062 val_loss=0.344611 val_acc=0.8505
+step=599 Ng=650.8000000000001 wall_s=237.513 train_loss=0.252390 train_acc=0.9062 val_loss=0.378031 val_acc=0.8345
+step=624 Ng=675.8000000000001 wall_s=245.850 train_loss=0.249530 train_acc=0.8438 val_loss=0.354504 val_acc=0.8430
+step=646 Ng=700.7 wall_s=255.753 train_loss=0.402726 train_acc=0.8438 val_loss=0.340990 val_acc=0.8515
+step=668 Ng=725.6 wall_s=264.871 train_loss=0.264173 train_acc=0.8750 val_loss=0.335479 val_acc=0.8565
+step=693 Ng=750.6 wall_s=273.110 train_loss=0.321656 train_acc=0.8438 val_loss=0.334390 val_acc=0.8565
+step=718 Ng=775.6 wall_s=281.173 train_loss=0.296746 train_acc=0.8438 val_loss=0.333796 val_acc=0.8540
+step=743 Ng=800.6 wall_s=289.523 train_loss=0.170274 train_acc=0.9062 val_loss=0.348850 val_acc=0.8475
+step=768 Ng=825.6 wall_s=297.638 train_loss=0.279119 train_acc=0.9062 val_loss=0.329949 val_acc=0.8555
+step=793 Ng=850.6 wall_s=305.760 train_loss=0.305347 train_acc=0.8750 val_loss=0.328141 val_acc=0.8535
+step=818 Ng=875.6 wall_s=314.061 train_loss=0.506911 train_acc=0.8125 val_loss=0.335011 val_acc=0.8580
+step=843 Ng=900.6 wall_s=322.485 train_loss=0.468190 train_acc=0.7812 val_loss=0.324761 val_acc=0.8570
+step=868 Ng=925.6 wall_s=330.929 train_loss=0.214685 train_acc=0.8750 val_loss=0.321993 val_acc=0.8600
+step=893 Ng=950.6 wall_s=339.185 train_loss=0.257689 train_acc=0.8750 val_loss=0.320832 val_acc=0.8565
+step=918 Ng=975.6 wall_s=347.559 train_loss=0.198900 train_acc=0.9062 val_loss=0.320946 val_acc=0.8620
+step=942 Ng=999.6 wall_s=355.541 train_loss=0.272275 train_acc=0.9062 val_loss=0.365064 val_acc=0.8390
+done budget=1000.0 compute_calls=999.6 n_outer_steps=942 clip_rate=0.5881
+[I 2026-10-06 04:24:03,691] Trial 0 finished with value: 0.32083218431472776 and parameters: {'lr': 2e-05, 'beta1': 0.9, 'beta2': 0.999, 'weight_decay': 0.01}. Best is trial 0 with value: 0.32083218431472776.
+DISTILBERT_RESULTS_MIRROR reason=bilstm_sst2_b25_trial_0 dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=6
+budget=1000.0 clip=1.0 dropout=eval_all gpu_name=Tesla T4 experiment=bilstm_sst2 model=bilstm-glove-840B-300d batch=32 max_len=128
+step=25 Ng=25.0 wall_s=8.261 train_loss=0.692653 train_acc=0.5000 val_loss=0.690924 val_acc=0.5680
+step=50 Ng=52.3 wall_s=18.627 train_loss=0.686385 train_acc=0.5938 val_loss=0.687079 val_acc=0.5680
+step=70 Ng=78.1 wall_s=30.187 train_loss=0.687077 train_acc=0.5000 val_loss=0.682546 val_acc=0.5680
+step=89 Ng=100.59999999999998 wall_s=39.483 train_loss=0.686731 train_acc=0.5312 val_loss=0.681271 val_acc=0.5680
+step=108 Ng=125.39999999999996 wall_s=51.247 train_loss=0.674240 train_acc=0.5625 val_loss=0.673793 val_acc=0.5720
+step=127 Ng=150.2 wall_s=62.640 train_loss=0.683829 train_acc=0.4062 val_loss=0.663553 val_acc=0.5925
+step=149 Ng=175.1 wall_s=72.630 train_loss=0.667557 train_acc=0.6250 val_loss=0.654761 val_acc=0.7020
+step=169 Ng=200.9 wall_s=84.106 train_loss=0.631141 train_acc=0.8438 val_loss=0.636177 val_acc=0.7780
+step=190 Ng=227.10000000000002 wall_s=95.792 train_loss=0.607955 train_acc=0.7500 val_loss=0.598476 val_acc=0.7070
+step=210 Ng=252.90000000000003 wall_s=107.374 train_loss=0.595369 train_acc=0.7188 val_loss=0.568860 val_acc=0.7480
+step=229 Ng=275.40000000000003 wall_s=116.642 train_loss=0.553215 train_acc=0.8438 val_loss=0.552378 val_acc=0.7840
+step=250 Ng=301.6000000000001 wall_s=128.332 train_loss=0.501402 train_acc=0.8438 val_loss=0.516238 val_acc=0.7955
+step=273 Ng=325.2000000000001 wall_s=136.294 train_loss=0.583436 train_acc=0.7500 val_loss=0.508245 val_acc=0.7955
+step=295 Ng=350.10000000000014 wall_s=146.038 train_loss=0.456400 train_acc=0.8125 val_loss=0.499033 val_acc=0.7995
+step=315 Ng=375.9000000000002 wall_s=157.614 train_loss=0.499889 train_acc=0.7812 val_loss=0.490584 val_acc=0.8030
+step=340 Ng=400.9000000000002 wall_s=165.694 train_loss=0.408329 train_acc=0.8750 val_loss=0.486355 val_acc=0.8055
+step=362 Ng=425.80000000000024 wall_s=175.515 train_loss=0.456572 train_acc=0.8750 val_loss=0.482860 val_acc=0.8065
+step=384 Ng=450.7000000000003 wall_s=185.358 train_loss=0.468262 train_acc=0.7812 val_loss=0.478163 val_acc=0.8090
+step=409 Ng=475.7000000000003 wall_s=193.497 train_loss=0.347557 train_acc=0.8750 val_loss=0.474786 val_acc=0.8120
+step=434 Ng=500.7000000000003 wall_s=201.765 train_loss=0.398752 train_acc=0.8750 val_loss=0.471964 val_acc=0.8130
+step=453 Ng=525.5000000000003 wall_s=213.541 train_loss=0.460460 train_acc=0.8438 val_loss=0.465112 val_acc=0.8150
+step=475 Ng=550.4000000000003 wall_s=222.677 train_loss=0.637514 train_acc=0.8125 val_loss=0.461051 val_acc=0.8220
+step=500 Ng=575.4000000000003 wall_s=230.976 train_loss=0.364419 train_acc=0.9375 val_loss=0.457908 val_acc=0.8225
+step=525 Ng=600.4000000000003 wall_s=239.350 train_loss=0.424984 train_acc=0.8750 val_loss=0.454144 val_acc=0.8235
+step=550 Ng=625.4000000000003 wall_s=247.647 train_loss=0.325680 train_acc=0.8750 val_loss=0.450025 val_acc=0.8260
+step=575 Ng=650.4000000000003 wall_s=255.806 train_loss=0.366647 train_acc=0.8750 val_loss=0.454272 val_acc=0.8225
+step=600 Ng=675.4000000000003 wall_s=264.049 train_loss=0.401932 train_acc=0.8125 val_loss=0.444884 val_acc=0.8260
+step=622 Ng=700.3000000000003 wall_s=274.026 train_loss=0.669062 train_acc=0.6562 val_loss=0.451753 val_acc=0.8200
+step=644 Ng=725.2000000000003 wall_s=283.963 train_loss=0.443702 train_acc=0.8125 val_loss=0.442468 val_acc=0.8220
+step=666 Ng=750.1000000000003 wall_s=293.987 train_loss=0.343521 train_acc=0.9062 val_loss=0.432730 val_acc=0.8295
+step=691 Ng=775.1000000000003 wall_s=302.239 train_loss=0.527110 train_acc=0.7812 val_loss=0.432015 val_acc=0.8280
+step=713 Ng=800.0000000000002 wall_s=312.064 train_loss=0.482774 train_acc=0.8750 val_loss=0.424693 val_acc=0.8310
+step=738 Ng=825.0000000000002 wall_s=320.281 train_loss=0.365607 train_acc=0.8750 val_loss=0.426386 val_acc=0.8310
+step=763 Ng=850.0000000000002 wall_s=328.411 train_loss=0.498980 train_acc=0.7812 val_loss=0.419595 val_acc=0.8345
+step=788 Ng=875.0000000000002 wall_s=336.531 train_loss=0.326387 train_acc=0.9062 val_loss=0.418153 val_acc=0.8345
+step=813 Ng=900.0000000000002 wall_s=344.788 train_loss=0.476251 train_acc=0.7812 val_loss=0.414861 val_acc=0.8365
+step=838 Ng=925.0000000000002 wall_s=353.165 train_loss=0.527966 train_acc=0.6875 val_loss=0.413662 val_acc=0.8365
+step=863 Ng=950.0000000000002 wall_s=361.619 train_loss=0.408355 train_acc=0.8750 val_loss=0.411519 val_acc=0.8375
+step=888 Ng=975.0000000000002 wall_s=369.856 train_loss=0.291644 train_acc=0.8750 val_loss=0.417408 val_acc=0.8370
+step=912 Ng=999.0000000000002 wall_s=377.935 train_loss=0.399562 train_acc=0.8125 val_loss=0.409623 val_acc=0.8375
+done budget=1000.0 compute_calls=999.0000000000002 n_outer_steps=912 clip_rate=0.4977
+[I 2026-10-06 04:30:22,740] Trial 1 finished with value: 0.40962293529510496 and parameters: {'lr': 4.234669946911433e-06, 'beta1': 0.8038853106767812, 'beta2': 0.9463172204645696, 'weight_decay': 0.05}. Best is trial 0 with value: 0.32083218431472776.
+DISTILBERT_RESULTS_MIRROR reason=bilstm_sst2_b25_trial_1 dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=7
+budget=1000.0 clip=1.0 dropout=eval_all gpu_name=Tesla T4 experiment=bilstm_sst2 model=bilstm-glove-840B-300d batch=32 max_len=128
+step=25 Ng=25.0 wall_s=8.227 train_loss=0.494705 train_acc=0.8438 val_loss=0.539836 val_acc=0.7415
+step=50 Ng=50.0 wall_s=16.533 train_loss=0.378204 train_acc=0.8125 val_loss=0.501995 val_acc=0.7745
+step=75 Ng=75.0 wall_s=24.781 train_loss=0.369172 train_acc=0.9062 val_loss=0.423429 val_acc=0.8140
+step=100 Ng=100.0 wall_s=33.110 train_loss=0.423708 train_acc=0.8750 val_loss=0.366004 val_acc=0.8365
+step=123 Ng=125.89999999999999 wall_s=41.936 train_loss=0.293437 train_acc=0.8750 val_loss=0.362999 val_acc=0.8370
+step=145 Ng=150.79999999999998 wall_s=51.978 train_loss=0.325789 train_acc=0.8750 val_loss=0.365978 val_acc=0.8325
+step=167 Ng=175.7 wall_s=61.736 train_loss=0.424971 train_acc=0.8125 val_loss=0.371920 val_acc=0.8280
+step=190 Ng=201.0 wall_s=71.590 train_loss=0.274410 train_acc=0.8750 val_loss=0.352359 val_acc=0.8410
+step=214 Ng=225.6 wall_s=79.804 train_loss=0.382482 train_acc=0.8750 val_loss=0.341214 val_acc=0.8530
+step=239 Ng=250.6 wall_s=87.993 train_loss=0.291497 train_acc=0.8438 val_loss=0.328568 val_acc=0.8515
+step=261 Ng=275.5 wall_s=96.496 train_loss=0.450490 train_acc=0.8750 val_loss=0.343277 val_acc=0.8550
+step=286 Ng=300.5 wall_s=104.657 train_loss=0.372360 train_acc=0.8125 val_loss=0.323699 val_acc=0.8590
+step=311 Ng=325.5 wall_s=113.054 train_loss=0.370134 train_acc=0.8438 val_loss=0.322296 val_acc=0.8620
+step=333 Ng=350.40000000000003 wall_s=122.076 train_loss=0.303243 train_acc=0.8438 val_loss=0.332961 val_acc=0.8605
+step=358 Ng=375.40000000000003 wall_s=130.251 train_loss=0.371925 train_acc=0.7812 val_loss=0.320560 val_acc=0.8665
+step=383 Ng=400.40000000000003 wall_s=138.511 train_loss=0.302785 train_acc=0.8750 val_loss=0.329271 val_acc=0.8655
+step=405 Ng=425.30000000000007 wall_s=148.145 train_loss=0.146670 train_acc=0.9688 val_loss=0.371125 val_acc=0.8425
+step=430 Ng=450.30000000000007 wall_s=156.471 train_loss=0.321638 train_acc=0.8750 val_loss=0.349694 val_acc=0.8405
+step=455 Ng=475.30000000000007 wall_s=164.982 train_loss=0.235981 train_acc=0.9062 val_loss=0.315968 val_acc=0.8660
+step=478 Ng=500.30000000000007 wall_s=173.300 train_loss=0.309985 train_acc=0.9062 val_loss=0.322399 val_acc=0.8625
+step=503 Ng=525.3000000000001 wall_s=181.683 train_loss=0.329166 train_acc=0.8750 val_loss=0.311795 val_acc=0.8665
+step=528 Ng=550.3000000000001 wall_s=190.024 train_loss=0.332877 train_acc=0.8750 val_loss=0.304062 val_acc=0.8670
+step=553 Ng=575.3000000000001 wall_s=198.291 train_loss=0.240839 train_acc=0.9062 val_loss=0.295055 val_acc=0.8750
+step=578 Ng=600.3000000000001 wall_s=206.450 train_loss=0.184446 train_acc=0.9375 val_loss=0.298280 val_acc=0.8700
+step=603 Ng=625.3000000000001 wall_s=214.696 train_loss=0.219872 train_acc=0.9062 val_loss=0.290914 val_acc=0.8775
+step=626 Ng=650.3000000000001 wall_s=222.933 train_loss=0.470042 train_acc=0.7500 val_loss=0.288601 val_acc=0.8795
+step=648 Ng=675.2 wall_s=232.407 train_loss=0.139725 train_acc=0.9375 val_loss=0.287041 val_acc=0.8890
+step=671 Ng=700.2 wall_s=240.865 train_loss=0.236600 train_acc=0.9375 val_loss=0.288085 val_acc=0.8800
+step=696 Ng=725.2 wall_s=249.030 train_loss=0.168317 train_acc=0.9375 val_loss=0.290766 val_acc=0.8670
+step=721 Ng=750.2 wall_s=257.269 train_loss=0.429782 train_acc=0.7812 val_loss=0.321971 val_acc=0.8525
+step=746 Ng=775.2 wall_s=265.532 train_loss=0.383667 train_acc=0.8750 val_loss=0.284249 val_acc=0.8750
+step=771 Ng=800.2 wall_s=273.747 train_loss=0.358384 train_acc=0.8750 val_loss=0.280774 val_acc=0.8820
+step=796 Ng=825.2 wall_s=281.783 train_loss=0.319474 train_acc=0.8438 val_loss=0.281746 val_acc=0.8870
+step=821 Ng=850.2 wall_s=290.071 train_loss=0.461715 train_acc=0.8438 val_loss=0.280259 val_acc=0.8815
+step=846 Ng=875.2 wall_s=298.436 train_loss=0.307814 train_acc=0.8438 val_loss=0.270414 val_acc=0.8870
+step=871 Ng=900.2 wall_s=306.778 train_loss=0.339489 train_acc=0.8750 val_loss=0.292531 val_acc=0.8785
+step=896 Ng=925.2 wall_s=315.023 train_loss=0.219964 train_acc=0.9062 val_loss=0.267455 val_acc=0.8945
+step=921 Ng=950.2 wall_s=323.293 train_loss=0.423974 train_acc=0.8438 val_loss=0.278035 val_acc=0.8835
+step=946 Ng=975.2 wall_s=331.401 train_loss=0.400525 train_acc=0.8125 val_loss=0.285797 val_acc=0.8740
+step=970 Ng=999.2 wall_s=339.333 train_loss=0.172452 train_acc=0.9375 val_loss=0.291340 val_acc=0.8785
+done budget=1000.0 compute_calls=999.2 n_outer_steps=970 clip_rate=0.3264
+[I 2026-10-06 04:36:03,224] Trial 2 finished with value: 0.2674548567533493 and parameters: {'lr': 0.00015801635497952304, 'beta1': 0.804086480751851, 'beta2': 0.9116725595053139, 'weight_decay': 0.001}. Best is trial 2 with value: 0.2674548567533493.
+DISTILBERT_RESULTS_MIRROR reason=bilstm_sst2_b25_trial_2 dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=8
+[W 2026-10-06 04:36:03,930] The 'greenlet' package is unavailable, falling back to sequential L-BFGS-B optimization. This may lead to slower suggestions.
+budget=1000.0 clip=1.0 dropout=eval_all gpu_name=Tesla T4 experiment=bilstm_sst2 model=bilstm-glove-840B-300d batch=32 max_len=128
+step=25 Ng=25.0 wall_s=8.276 train_loss=0.713968 train_acc=0.5625 val_loss=0.698906 val_acc=0.5620
+step=50 Ng=50.0 wall_s=16.590 train_loss=0.694888 train_acc=0.5938 val_loss=0.707867 val_acc=0.5675
+step=73 Ng=75.89999999999999 wall_s=26.613 train_loss=0.645242 train_acc=0.6875 val_loss=0.660631 val_acc=0.6025
+step=92 Ng=100.09999999999998 wall_s=35.524 train_loss=0.728208 train_acc=0.5938 val_loss=0.638726 val_acc=0.6120
+step=112 Ng=125.29999999999997 wall_s=44.660 train_loss=0.753980 train_acc=0.6562 val_loss=0.587462 val_acc=0.6910
+step=137 Ng=150.29999999999995 wall_s=53.081 train_loss=0.481782 train_acc=0.7500 val_loss=0.582684 val_acc=0.6910
+step=162 Ng=175.29999999999995 wall_s=61.368 train_loss=0.508687 train_acc=0.7500 val_loss=0.558583 val_acc=0.6845
+step=185 Ng=200.59999999999997 wall_s=69.744 train_loss=0.503850 train_acc=0.7812 val_loss=0.549780 val_acc=0.7050
+step=210 Ng=225.59999999999997 wall_s=77.977 train_loss=0.588946 train_acc=0.6875 val_loss=0.538820 val_acc=0.7105
+step=235 Ng=250.59999999999997 wall_s=86.210 train_loss=0.288189 train_acc=0.8750 val_loss=0.489035 val_acc=0.7800
+step=260 Ng=275.59999999999997 wall_s=94.495 train_loss=0.374343 train_acc=0.7812 val_loss=0.651637 val_acc=0.7710
+step=285 Ng=300.59999999999997 wall_s=102.656 train_loss=0.324458 train_acc=0.8125 val_loss=0.439262 val_acc=0.8035
+step=310 Ng=325.59999999999997 wall_s=111.039 train_loss=0.331448 train_acc=0.8438 val_loss=0.391428 val_acc=0.8370
+step=333 Ng=350.9 wall_s=119.238 train_loss=0.376919 train_acc=0.8125 val_loss=0.408051 val_acc=0.8125
+step=358 Ng=375.9 wall_s=127.367 train_loss=0.439114 train_acc=0.7188 val_loss=0.335519 val_acc=0.8600
+step=377 Ng=400.70000000000005 wall_s=136.632 train_loss=0.700635 train_acc=0.6562 val_loss=0.479789 val_acc=0.7570
+step=400 Ng=425.70000000000005 wall_s=144.743 train_loss=0.385189 train_acc=0.8125 val_loss=0.436965 val_acc=0.7655
+step=425 Ng=450.70000000000005 wall_s=153.059 train_loss=0.395765 train_acc=0.8125 val_loss=0.417216 val_acc=0.8040
+step=447 Ng=475.00000000000006 wall_s=161.297 train_loss=0.146565 train_acc=0.9688 val_loss=0.434645 val_acc=0.8130
+step=472 Ng=500.00000000000006 wall_s=169.617 train_loss=0.389616 train_acc=0.8438 val_loss=0.433875 val_acc=0.8155
+step=493 Ng=525.9 wall_s=179.822 train_loss=0.890456 train_acc=0.6562 val_loss=0.682038 val_acc=0.7815
+step=518 Ng=550.9 wall_s=188.023 train_loss=0.485090 train_acc=0.8125 val_loss=0.419953 val_acc=0.8020
+step=541 Ng=575.9 wall_s=196.421 train_loss=0.480265 train_acc=0.7500 val_loss=0.409361 val_acc=0.7820
+step=566 Ng=600.9 wall_s=204.631 train_loss=0.439236 train_acc=0.8438 val_loss=0.402168 val_acc=0.8275
+step=588 Ng=625.8 wall_s=213.693 train_loss=0.518332 train_acc=0.7500 val_loss=0.396532 val_acc=0.8025
+step=607 Ng=649.9999999999999 wall_s=222.838 train_loss=0.218394 train_acc=0.9062 val_loss=0.363773 val_acc=0.8525
+step=608 Ng=650.9999999999999 wall_s=226.399 train_loss=0.403167 train_acc=0.8438 val_loss=0.372980 val_acc=0.8490
+step=632 Ng=674.9999999999999 wall_s=234.442 train_loss=0.430838 train_acc=0.8438 val_loss=0.348489 val_acc=0.8535
+step=633 Ng=675.9999999999999 wall_s=238.047 train_loss=0.439396 train_acc=0.8125 val_loss=0.344633 val_acc=0.8555
+step=657 Ng=699.9999999999999 wall_s=246.200 train_loss=0.352667 train_acc=0.8750 val_loss=0.316244 val_acc=0.8630
+step=658 Ng=700.9999999999999 wall_s=249.805 train_loss=0.412489 train_acc=0.7812 val_loss=0.320151 val_acc=0.8635
+step=682 Ng=724.9999999999999 wall_s=257.982 train_loss=0.364198 train_acc=0.8750 val_loss=0.318381 val_acc=0.8570
+step=683 Ng=725.9999999999999 wall_s=261.555 train_loss=0.208654 train_acc=0.9688 val_loss=0.325338 val_acc=0.8545
+step=707 Ng=749.9999999999999 wall_s=269.491 train_loss=0.184820 train_acc=0.9375 val_loss=0.311414 val_acc=0.8770
+step=708 Ng=750.9999999999999 wall_s=273.080 train_loss=0.372615 train_acc=0.8750 val_loss=0.318119 val_acc=0.8710
+step=732 Ng=774.9999999999999 wall_s=281.267 train_loss=0.358077 train_acc=0.8125 val_loss=0.299609 val_acc=0.8735
+step=733 Ng=775.9999999999999 wall_s=284.853 train_loss=0.066786 train_acc=0.9688 val_loss=0.314752 val_acc=0.8740
+step=757 Ng=799.9999999999999 wall_s=292.877 train_loss=0.196839 train_acc=0.9375 val_loss=0.306621 val_acc=0.8815
+step=758 Ng=800.9999999999999 wall_s=296.453 train_loss=0.412390 train_acc=0.8750 val_loss=0.307268 val_acc=0.8865
+step=782 Ng=824.9999999999999 wall_s=304.350 train_loss=0.293232 train_acc=0.9062 val_loss=0.321599 val_acc=0.8605
+step=783 Ng=825.9999999999999 wall_s=307.950 train_loss=0.217550 train_acc=0.9688 val_loss=0.312116 val_acc=0.8650
+step=807 Ng=849.9999999999999 wall_s=315.970 train_loss=0.313123 train_acc=0.8750 val_loss=0.291649 val_acc=0.8850
+step=808 Ng=850.9999999999999 wall_s=319.546 train_loss=0.368170 train_acc=0.8438 val_loss=0.286110 val_acc=0.8880
+step=832 Ng=874.9999999999999 wall_s=327.731 train_loss=0.304967 train_acc=0.8438 val_loss=0.293863 val_acc=0.8785
+step=833 Ng=875.9999999999999 wall_s=331.334 train_loss=0.282296 train_acc=0.8750 val_loss=0.290926 val_acc=0.8740
+step=857 Ng=899.9999999999999 wall_s=339.501 train_loss=0.420582 train_acc=0.7500 val_loss=0.347238 val_acc=0.8645
+step=858 Ng=900.9999999999999 wall_s=343.108 train_loss=0.342194 train_acc=0.8438 val_loss=0.326795 val_acc=0.8710
+step=882 Ng=924.9999999999999 wall_s=351.246 train_loss=0.224970 train_acc=0.9062 val_loss=0.332391 val_acc=0.8715
+step=883 Ng=925.9999999999999 wall_s=354.807 train_loss=0.591052 train_acc=0.8750 val_loss=0.322125 val_acc=0.8745
+step=907 Ng=949.9999999999999 wall_s=362.930 train_loss=0.398761 train_acc=0.9062 val_loss=0.292257 val_acc=0.8855
+step=908 Ng=950.9999999999999 wall_s=366.509 train_loss=0.167129 train_acc=0.9375 val_loss=0.293467 val_acc=0.8855
+step=932 Ng=974.9999999999999 wall_s=374.828 train_loss=0.133219 train_acc=0.9375 val_loss=0.307256 val_acc=0.8820
+step=933 Ng=975.9999999999999 wall_s=378.409 train_loss=0.109835 train_acc=0.9688 val_loss=0.317018 val_acc=0.8830
+step=957 Ng=999.9999999999999 wall_s=386.267 train_loss=0.276013 train_acc=0.8438 val_loss=0.303431 val_acc=0.8845
+done budget=1000.0 compute_calls=999.9999999999999 n_outer_steps=957 clip_rate=0.8609
+[I 2026-10-06 04:42:31,352] Trial 3 finished with value: 0.2861101932525635 and parameters: {'lr': 0.0029999999999999936, 'beta1': 0.9119106579364599, 'beta2': 0.9, 'weight_decay': 0.001}. Best is trial 2 with value: 0.2674548567533493.
+DISTILBERT_RESULTS_MIRROR reason=bilstm_sst2_b25_trial_3 dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=9
+budget=1000.0 clip=1.0 dropout=eval_all gpu_name=Tesla T4 experiment=bilstm_sst2 model=bilstm-glove-840B-300d batch=32 max_len=128
+step=25 Ng=25.0 wall_s=8.294 train_loss=0.513338 train_acc=0.8438 val_loss=0.604972 val_acc=0.7380
+step=50 Ng=52.0 wall_s=16.976 train_loss=0.852207 train_acc=0.7188 val_loss=0.505653 val_acc=0.7825
+step=73 Ng=75.0 wall_s=24.820 train_loss=0.453993 train_acc=0.8750 val_loss=0.434574 val_acc=0.8195
+step=96 Ng=100.0 wall_s=33.158 train_loss=0.389108 train_acc=0.8438 val_loss=0.394879 val_acc=0.8220
+step=119 Ng=125.89999999999999 wall_s=42.652 train_loss=0.444647 train_acc=0.8125 val_loss=0.378181 val_acc=0.8360
+step=142 Ng=150.89999999999998 wall_s=50.975 train_loss=0.390263 train_acc=0.8438 val_loss=0.355016 val_acc=0.8445
+step=164 Ng=175.79999999999998 wall_s=60.731 train_loss=0.474938 train_acc=0.8125 val_loss=0.348848 val_acc=0.8455
+step=189 Ng=200.79999999999998 wall_s=69.090 train_loss=0.341330 train_acc=0.8438 val_loss=0.343139 val_acc=0.8490
+step=211 Ng=225.7 wall_s=77.884 train_loss=0.508462 train_acc=0.7500 val_loss=0.340133 val_acc=0.8485
+step=236 Ng=250.7 wall_s=86.113 train_loss=0.344813 train_acc=0.8750 val_loss=0.340122 val_acc=0.8540
+step=258 Ng=275.6 wall_s=94.473 train_loss=0.204983 train_acc=0.8750 val_loss=0.333314 val_acc=0.8510
+step=283 Ng=300.6 wall_s=102.663 train_loss=0.195679 train_acc=1.0000 val_loss=0.328247 val_acc=0.8585
+step=308 Ng=325.6 wall_s=110.999 train_loss=0.172511 train_acc=0.9688 val_loss=0.334588 val_acc=0.8540
+step=330 Ng=350.50000000000006 wall_s=120.086 train_loss=0.244909 train_acc=0.8750 val_loss=0.320795 val_acc=0.8630
+step=355 Ng=375.50000000000006 wall_s=128.170 train_loss=0.377034 train_acc=0.8438 val_loss=0.320465 val_acc=0.8635
+step=380 Ng=402.80000000000007 wall_s=137.198 train_loss=0.332917 train_acc=0.8750 val_loss=0.317465 val_acc=0.8620
+step=400 Ng=425.7000000000001 wall_s=146.396 train_loss=0.449651 train_acc=0.8125 val_loss=0.322424 val_acc=0.8570
+step=424 Ng=450.3000000000001 wall_s=154.550 train_loss=0.413614 train_acc=0.8125 val_loss=0.364973 val_acc=0.8440
+step=449 Ng=475.3000000000001 wall_s=162.963 train_loss=0.348965 train_acc=0.9062 val_loss=0.313904 val_acc=0.8635
+step=472 Ng=500.3000000000001 wall_s=171.292 train_loss=0.324416 train_acc=0.8438 val_loss=0.309893 val_acc=0.8700
+step=497 Ng=525.3000000000002 wall_s=179.613 train_loss=0.405723 train_acc=0.7812 val_loss=0.303144 val_acc=0.8740
+step=522 Ng=550.3000000000002 wall_s=187.874 train_loss=0.275652 train_acc=0.9062 val_loss=0.295986 val_acc=0.8715
+step=547 Ng=575.3000000000002 wall_s=196.178 train_loss=0.105100 train_acc=1.0000 val_loss=0.293701 val_acc=0.8770
+step=572 Ng=600.3000000000002 wall_s=204.279 train_loss=0.311580 train_acc=0.9062 val_loss=0.335879 val_acc=0.8490
+step=594 Ng=625.2000000000002 wall_s=213.027 train_loss=0.146283 train_acc=0.9688 val_loss=0.302886 val_acc=0.8690
+step=619 Ng=650.2000000000002 wall_s=221.241 train_loss=0.315158 train_acc=0.8750 val_loss=0.301809 val_acc=0.8650
+step=641 Ng=675.1000000000001 wall_s=231.050 train_loss=0.486997 train_acc=0.8438 val_loss=0.297050 val_acc=0.8770
+step=664 Ng=700.1000000000001 wall_s=239.482 train_loss=0.343134 train_acc=0.8438 val_loss=0.297805 val_acc=0.8770
+step=689 Ng=725.1000000000001 wall_s=247.648 train_loss=0.193574 train_acc=0.9375 val_loss=0.284647 val_acc=0.8825
+step=714 Ng=750.1000000000001 wall_s=255.846 train_loss=0.166646 train_acc=0.9375 val_loss=0.283904 val_acc=0.8770
+step=739 Ng=775.1000000000001 wall_s=264.089 train_loss=0.279000 train_acc=0.9062 val_loss=0.295659 val_acc=0.8730
+step=764 Ng=800.1000000000001 wall_s=272.247 train_loss=0.223338 train_acc=0.9062 val_loss=0.283156 val_acc=0.8825
+step=789 Ng=825.1000000000001 wall_s=280.258 train_loss=0.237243 train_acc=0.9375 val_loss=0.277717 val_acc=0.8860
+step=814 Ng=850.1000000000001 wall_s=288.443 train_loss=0.196259 train_acc=0.8750 val_loss=0.275227 val_acc=0.8825
+step=839 Ng=875.1000000000001 wall_s=296.754 train_loss=0.101301 train_acc=0.9688 val_loss=0.273258 val_acc=0.8910
+step=864 Ng=900.1000000000001 wall_s=305.127 train_loss=0.408561 train_acc=0.8125 val_loss=0.283680 val_acc=0.8785
+step=889 Ng=925.1000000000001 wall_s=313.329 train_loss=0.190739 train_acc=0.9062 val_loss=0.272075 val_acc=0.8885
+step=914 Ng=950.1000000000001 wall_s=321.588 train_loss=0.195577 train_acc=0.8750 val_loss=0.278294 val_acc=0.8885
+step=939 Ng=975.1000000000001 wall_s=329.826 train_loss=0.208654 train_acc=0.8750 val_loss=0.279384 val_acc=0.8850
+step=963 Ng=999.1000000000001 wall_s=337.656 train_loss=0.132465 train_acc=0.9375 val_loss=0.278241 val_acc=0.8855
+done budget=1000.0 compute_calls=999.1000000000001 n_outer_steps=963 clip_rate=0.3532
+[I 2026-10-06 04:48:10,293] Trial 4 finished with value: 0.27207507491111754 and parameters: {'lr': 0.0001191926135172827, 'beta1': 0.8, 'beta2': 0.9835343547830661, 'weight_decay': 0.001}. Best is trial 2 with value: 0.2674548567533493.
+DISTILBERT_RESULTS_MIRROR reason=bilstm_sst2_b25_trial_4 dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=10
+best b25: val_loss=0.2674548567533493 params={'lr': 0.00015801635497952304, 'beta1': 0.804086480751851, 'beta2': 0.9116725595053139, 'weight_decay': 0.001}
+DISTILBERT_RESULTS_MIRROR reason=b25_finally dest=/content/drive/MyDrive/Optimiser Formula Creation - Working/B25_Experiments/Results_JumpingAdamSimpsonB25/_live/bilstm_sst2 n_db=2 n_json=10

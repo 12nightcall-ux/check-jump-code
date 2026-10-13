@@ -1,0 +1,36 @@
+--- hpo_gp_bayesopt.py (before)
++++ hpo_gp_bayesopt.py (patch 4)
+@@ -564,4 +564,20 @@
+ 
+ 
++def _default_trial_present(study, default: dict) -> bool:
++    """True if the default setting already has a COMPLETE trial or is still queued (WAITING).
++    A default trial that was killed while RUNNING is marked FAIL first, so it is NOT present
++    and gets queued again (otherwise an interrupted first trial would silently lose the default)."""
++    for t in study.trials:
++        if t.state == TrialState.COMPLETE:
++            try:
++                if all(abs(float(t.params[k]) - float(v)) <= 1e-12 * max(1.0, abs(float(v))) for k, v in default.items()):
++                    return True
++            except (KeyError, TypeError, ValueError):
++                pass
++        elif t.state == TrialState.WAITING and t.system_attrs.get("fixed_params") == default:
++            return True
++    return False
++
++
+ def run_one_optimizer(opt_name: str, task, n_trials: int, seed: int, smoke: bool) -> None:
+     sampler = make_sampler(seed)
+@@ -573,9 +589,9 @@
+         load_if_exists=True,
+     )
+-    if not smoke and len(study.trials) == 0:
++    n_failed_running = _fail_leftover_running(study)
++    if not smoke and not _default_trial_present(study, DEFAULT_TRIAL0[opt_name]):
+         # trial 0 = the standard fine-tuning default; it lies inside the search box
+         study.enqueue_trial(dict(DEFAULT_TRIAL0[opt_name]))
+-        print("enqueued default trial 0 for %s: %s" % (opt_name, DEFAULT_TRIAL0[opt_name]), flush=True)
+-    n_failed_running = _fail_leftover_running(study)
++        print("enqueued default trial for %s: %s" % (opt_name, DEFAULT_TRIAL0[opt_name]), flush=True)
+     n_complete = sum(t.state == TrialState.COMPLETE for t in study.trials)
+     remaining = n_trials - n_complete

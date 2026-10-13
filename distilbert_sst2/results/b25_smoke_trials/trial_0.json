@@ -1,0 +1,56 @@
+{
+  "trial_number": 0,
+  "optimizer": "b25",
+  "smoke": true,
+  "budget": 20.0,
+  "n_outer_steps": 20,
+  "compute_calls": 20.0,
+  "clip_rate": 0.3,
+  "val_loss": 0.6697569618225098,
+  "best_compute_calls": 20.0,
+  "best_wall_s": 6.6274805539999875,
+  "val_acc": 0.568,
+  "hpo_objective_val_loss": 0.6697569618225098,
+  "last_val_loss": 0.6697569618225098,
+  "last_val_acc": 0.568,
+  "train_loss": 0.6761917471885681,
+  "train_acc": 0.5625,
+  "wall_s": 6.6274805539999875,
+  "gpu_name": "NVIDIA L4",
+  "hparams": {
+    "lr": 4.234669946911433e-06,
+    "betas": [
+      0.8038853106767812,
+      0.9463172204645696
+    ],
+    "weight_decay": 0.05
+  },
+  "curve": [
+    {
+      "outer_step": 20,
+      "compute_calls": 20.0,
+      "wall_s": 6.6274805539999875,
+      "train_loss": 0.6761917471885681,
+      "train_acc": 0.5625,
+      "val_loss": 0.6697569618225098,
+      "val_acc": 0.568
+    }
+  ],
+  "b25_stats": {
+    "attempts": 0,
+    "kept": 0,
+    "undone": 0,
+    "fu_checked": 0,
+    "gate_skipped": 0,
+    "skipped_uphill": 0,
+    "jumps_failed": 0,
+    "clip_fired": 6,
+    "momentum_transfers": 0,
+    "transfer_clipped": 0,
+    "undo_coverage_ok": true
+  },
+  "dropout_mode": "eval_all",
+  "clip_norm": 1.0,
+  "protocol_early_stop": false,
+  "experiment_name": "distilbert_sst2"
+}

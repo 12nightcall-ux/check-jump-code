@@ -1,0 +1,74 @@
+{
+  "optimizer": "adam",
+  "seeds": [
+    42,
+    137,
+    256,
+    512,
+    1024
+  ],
+  "hparams": {
+    "lr": 2e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "weight_decay": 0.0
+  },
+  "source_trial": 0,
+  "gpu_name": "NVIDIA L4",
+  "budget": 1000,
+  "checkpoint_rule": "global_best",
+  "clip_rate": 0.9994,
+  "n": 5,
+  "protocol_early_stop": false,
+  "experiment_name": "mbert_sst2",
+  "val_loss": {
+    "mean": 0.23060312752723694,
+    "std": 0.004335622295454568
+  },
+  "val_acc": {
+    "mean": 0.9062,
+    "std": 0.005751086853804257
+  },
+  "compute_calls": {
+    "mean": 930.0,
+    "std": 62.24949798994366
+  },
+  "wall_s": {
+    "mean": 623.013601596,
+    "std": 42.21232479830768
+  },
+  "n_outer_steps": {
+    "mean": 1000.0,
+    "std": 0.0
+  },
+  "train_loss": {
+    "mean": 0.146166530251503,
+    "std": 0.031222378606943837
+  },
+  "train_acc": {
+    "mean": 0.94375,
+    "std": 0.03423265984407288
+  },
+  "test_loss": {
+    "mean": 0.33514274517330556,
+    "std": 0.02871038312644854
+  },
+  "test_acc": {
+    "mean": 0.8669724770642202,
+    "std": 0.012217474628820243
+  },
+  "end_val_loss": {
+    "mean": 0.24246107631921768,
+    "std": 0.01255446194427596
+  },
+  "end_val_acc": {
+    "mean": 0.9049,
+    "std": 0.009768572055321117
+  },
+  "end_compute_calls": {
+    "mean": 1000.0,
+    "std": 0.0
+  }
+}
